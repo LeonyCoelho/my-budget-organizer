@@ -1,2 +1,2 @@
 # my-budget-organizer
-A multi-user budget organizer.
+A single-user budget organizer.
