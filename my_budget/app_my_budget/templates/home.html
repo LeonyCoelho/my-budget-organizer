@@ -1,0 +1,7 @@
+<h1>Home</h1>
+<h4>Contas</h4>
+<ul>
+    {% for account in accounts %}
+    <li>{{ account.name }} - {{global_currency}} {{ account.amount}}</li>
+    {% endfor %}
+</ul>
