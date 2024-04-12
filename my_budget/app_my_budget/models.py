@@ -27,7 +27,7 @@ class TransactionSubCategory(models.Model):
 
 class Transaction(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(null=True)
     picture = models.ImageField(upload_to='transaction_pictures/', blank=True, null=True)
     transaction_type_choices = [
         ('Income', 'Income'),
@@ -35,12 +35,12 @@ class Transaction(models.Model):
         ('Transfer', 'Transfer'),
     ]
     transaction_type = models.CharField(max_length=20, choices=transaction_type_choices)
-    category = models.ForeignKey(TransactionCategory, on_delete=models.CASCADE)
-    subcategory = models.ForeignKey(TransactionSubCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(TransactionCategory, on_delete=models.CASCADE, null=True)
+    subcategory = models.ForeignKey(TransactionSubCategory, on_delete=models.CASCADE, null=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    recurrent = models.BooleanField(default=False)
-    paid = models.BooleanField(default=False)
+    recurrent = models.BooleanField(default=False, null=True)
+    paid = models.BooleanField(default=True)
     paid_at = models.DateTimeField(null=True, blank=True)
     due_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,7 +1,64 @@
 <h1>Home</h1>
 <h4>Contas</h4>
+<p>Total: {{ global_currency }} {{ total_amount }}</p>
+
 <ul>
     {% for account in accounts %}
     <li>{{ account.name }} - {{global_currency}} {{ account.amount}}</li>
     {% endfor %}
 </ul>
+
+<h2>Adicionar Nova Transação</h2>
+<form method="post">
+    {% csrf_token %}
+    
+    <label for="name">Nome:</label>
+    <input type="text" id="name" name="name" required><br>
+    
+    <label for="description">Descrição:</label>
+    <textarea id="description" name="description"></textarea><br>
+    
+    <label for="picture">Imagem:</label>
+    <input type="file" id="picture" name="picture"><br>
+    
+    <label for="transaction_type">Tipo de Transação:</label>
+    <select id="transaction_type" name="transaction_type">
+        <option value="Income">Renda</option>
+        <option value="Expense">Despesa</option>
+        <option value="Transfer">Transferência</option>
+    </select><br>
+    
+    <label for="category">Categoria:</label>
+    <select id="category" name="category">
+        <!-- Opções de categoria aqui -->
+    </select><br>
+    
+    <label for="subcategory">Subcategoria:</label>
+    <select id="subcategory" name="subcategory">
+        <!-- Opções de subcategoria aqui -->
+    </select><br>
+    
+    <label for="account">Conta:</label>
+    <select id="account" name="account">
+        {% for account in accounts %}
+            <option value="{{ account.id }}" >{{ account.name }}</option>
+        {% endfor %}
+    </select><br>
+    
+    <label for="amount">Valor:</label>
+    <input type="number" id="amount" name="amount" step="0.01" required><br>
+    
+    <label for="recurrent">Recorrente:</label>
+    <input type="checkbox" id="recurrent" name="recurrent"><br>
+    
+    <label for="paid">Pago:</label>
+    <input type="checkbox" id="paid" name="paid"><br>
+    
+    <label for="paid_at">Data de Pagamento:</label>
+    <input type="datetime-local" id="paid_at" name="paid_at"><br>
+    
+    <label for="due_at">Data de Vencimento:</label>
+    <input type="datetime-local" id="due_at" name="due_at"><br>
+    
+    <button type="submit">Adicionar Transação</button>
+</form>
