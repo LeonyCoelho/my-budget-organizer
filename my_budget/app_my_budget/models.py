@@ -18,6 +18,9 @@ class Account(models.Model):
     ]
     account_type = models.CharField(max_length=20, choices=account_type_choices)
 
+    def __str__(self):
+        return self.name
+
 class TransactionCategory(models.Model):
     name = models.CharField(max_length=100)
 
@@ -38,13 +41,21 @@ class Transaction(models.Model):
     category = models.ForeignKey(TransactionCategory, on_delete=models.CASCADE, null=True)
     subcategory = models.ForeignKey(TransactionSubCategory, on_delete=models.CASCADE, null=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
+    target_account = models.ForeignKey(Account, related_name='transactions_received', on_delete=models.CASCADE, null=True, blank=True) # Permitindo que o campo seja nulo
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    recurrent = models.BooleanField(default=False, null=True)
+    recurrent = models.BooleanField(default=False)
     paid = models.BooleanField(default=True)
     paid_at = models.DateTimeField(null=True, blank=True)
     due_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        if self.transaction_type == 'Transfer':
+            self.category = None
+            self.subcategory = None
+        super().save(*args, **kwargs)
+
 
 class Goal(models.Model):
     name = models.CharField(max_length=100)
