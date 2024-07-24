@@ -15,9 +15,11 @@
         }
     </style>
     <body>
-        <div class="container">
-            <h1>Home</h1>
+        <div class="container mt-3">
             <div class="row">
+
+<!-- ======================================== RESUME =================================================================================== -->
+
                 <div class="col-3 mb-3">
                     <div class="card h-100">
                         <div class="card-header">Resume</div>
@@ -27,13 +29,16 @@
                         </div>
                     </div>
                 </div>
+                
+<!-- ======================================== BUTTONS ================================================================================== -->
+
                 <div class="col-9">
                     <div class="row">
                         <div class="col-4 mb-3">
-                            <div class="card" onclick="showTransactionCard()"><h4 class="text-center mt-3 mb-3">Transaction</h4></div>
+                            <div class="card" type="button" data-bs-toggle="modal" data-bs-target="#transactionModal"><h4 class="text-center mt-3 mb-3">Transaction</h4></div>
                         </div>
                         <div class="col-4 mb-3">
-                            <div class="card" onclick="showTransferCard()"><h4 class="text-center mt-3 mb-3">Transfer</h4></div>
+                            <div class="card" type="button" data-bs-toggle="modal" data-bs-target="#transferModal"><h4 class="text-center mt-3 mb-3">Transfer</h4></div>
                         </div>
                         <div class="col-4 mb-3">
                             <div class="card"><h4 class="text-center mt-3 mb-3">Pending</h4></div>
@@ -48,143 +53,151 @@
                             <div class="card"><h4 class="text-center mt-3 mb-3">Transaction</h4></div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">          
+                </div>       
             
-<!-- ======================================== TRANSACTIONS ========================================================================= -->
+<!-- ======================================== NEW TRANSACTIONS ========================================================================= -->
 
-                <div class="col-12">
-                    <div class="card mb-3 transaction-card hidden">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            New Transaction
-                            <button type="button" class="btn-close" onclick="hideTransactionCard()"></button>
-                        </div>
-                        <div class="card-body">
-                            <form method="post" action="{% url 'new_transaction' %}">
-                                {% csrf_token %}
-                                
-                                <div class="row">
-                                    <div class="col-8">
-                                        <label class="form-check-label" for="name">Name:</label>
-                                        <input class="form-control" type="text" id="name" name="name" required><br>
-                                    </div>
-                                    <div class="col-2">
-                                        <label class="form-check-label" for="transaction_type">Transaction type:</label>
-                                        <select class="form-control" id="transaction_type" name="transaction_type">
-                                            <option value="Income">Income</option>
-                                            <option value="Expense">Expense</option>
-                                        </select><br>
-                                    </div>
-                                    <div class="col-2">
-                                        <label class="form-check-label" for="amount">Amount:</label>
-                                        <input class="form-control" type="number" id="amount" name="amount" step="0.01" required><br>
-                                    </div>
+                <div class="modal fade" id="transactionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header d-flex justify-content-between align-items-center">
+                                New Transaction
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="{% url 'new_transaction' %}">
+                                    {% csrf_token %}
                                     
-                                    <div class="col-12">
-                                        <label class="form-check-label" for="picture">Image:</label>
-                                        <input class="form-control" type="file" id="picture" name="picture"><br>
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <label class="form-check-label" for="name">Name:</label>
+                                            <input class="form-control" type="text" id="name" name="name" required><br>
+                                        </div>
+                                        <div class="col-2">
+                                            <label class="form-check-label" for="transaction_type">Transaction type:</label>
+                                            <select class="form-control" id="transaction_type" name="transaction_type">
+                                                <option value="Income">Income</option>
+                                                <option value="Expense">Expense</option>
+                                            </select><br>
+                                        </div>
+                                        <div class="col-2">
+                                            <label class="form-check-label" for="amount">Amount:</label>
+                                            <input class="form-control" type="number" id="amount" name="amount" step="0.01" required><br>
+                                        </div>
+                                        
+                                        <div class="col-12">
+                                            <label class="form-check-label" for="picture">Image:</label>
+                                            <input class="form-control" type="file" id="picture" name="picture"><br>
+                                        </div>
+                                                                
+                                        <div class="col-4">
+                                            <label class="form-check-label" for="category">Category:</label>
+                                            <select class="form-control" id="category" name="category">
+                                                <!-- Opções de categoria aqui -->
+                                            </select><br>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-check-label" for="subcategory">Subcategory:</label>
+                                            <select class="form-control" id="subcategory" name="subcategory">
+                                                <!-- Opções de subcategoria aqui -->
+                                            </select><br>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-check-label" for="account">Account:</label>
+                                            <select class="form-control" id="account" name="account">
+                                                {% for account in accounts %}
+                                                <option value="{{ account.id }}" >{{ account.name }}</option>
+                                                {% endfor %}
+                                            </select><br>
+                                        </div>
+                                        <div class="col-3">
+                                            <label class="form-check-label" for="recurrent">Recurrent:</label>
+                                            <input  type="checkbox" id="recurrent" name="recurrent"><br>
+                                        </div>
+                                        <div class="col-3">
+                                            <label class="form-check-label" for="paid">Paid:</label>
+                                            <input type="checkbox" id="paid" name="paid" checked><br>
+                                        </div>
+                                        <div class="col-3">
+                                            <label class="form-check-label" for="paid_at">Pay date:</label>
+                                            <input class="form-control" type="datetime-local" id="paid_at" name="paid_at"><br>
+                                        </div>
+                                        <div class="col-3">
+                                            <label class="form-check-label" for="due_at">Due date:</label>
+                                            <input class="form-control" type="datetime-local" id="due_at" name="due_at"><br>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-check-label" for="description">Description:</label>
+                                            <textarea class="form-control" id="description" name="description"></textarea><br>
+                                        </div>
                                     </div>
-                                                              
-                                    <div class="col-4">
-                                        <label class="form-check-label" for="category">Category:</label>
-                                        <select class="form-control" id="category" name="category">
-                                            <!-- Opções de categoria aqui -->
-                                        </select><br>
-                                    </div>
-                                    <div class="col-4">
-                                        <label class="form-check-label" for="subcategory">Subcategory:</label>
-                                        <select class="form-control" id="subcategory" name="subcategory">
-                                            <!-- Opções de subcategoria aqui -->
-                                        </select><br>
-                                    </div>
-                                    <div class="col-4">
-                                        <label class="form-check-label" for="account">Account:</label>
-                                        <select class="form-control" id="account" name="account">
-                                            {% for account in accounts %}
-                                            <option value="{{ account.id }}" >{{ account.name }}</option>
-                                            {% endfor %}
-                                        </select><br>
-                                    </div>
-                                    <div class="col-3">
-                                        <label class="form-check-label" for="recurrent">Recurrent:</label>
-                                        <input  type="checkbox" id="recurrent" name="recurrent"><br>
-                                    </div>
-                                    <div class="col-3">
-                                        <label class="form-check-label" for="paid">Paid:</label>
-                                        <input type="checkbox" id="paid" name="paid" checked><br>
-                                    </div>
-                                    <div class="col-3">
-                                        <label class="form-check-label" for="paid_at">Pay date:</label>
-                                        <input class="form-control" type="datetime-local" id="paid_at" name="paid_at"><br>
-                                    </div>
-                                    <div class="col-3">
-                                        <label class="form-check-label" for="due_at">Due date:</label>
-                                        <input class="form-control" type="datetime-local" id="due_at" name="due_at"><br>
-                                    </div>
-                                    <div class="col-12">
-                                        <label class="form-check-label" for="description">Description:</label>
-                                        <textarea class="form-control" id="description" name="description"></textarea><br>
-                                    </div>
-                                </div>
-                                <button class="btn btn-primary" type="submit">Done</button>
-                            </form>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button class="btn btn-primary" type="submit">Done</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-<!-- ============================================= NEW TRANSFER ==================================================== -->
+<!-- ============================================= NEW TRANSFER ======================================================================== -->
 
-                <div class="col-12">
-                    <div class="card mb-3 transfer-card hidden">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            New Transfer
-                            <button type="button" class="btn-close" onclick="hideTransferCard()"></button>
-                        </div>
-                        <div class="card-body">
+                <div class="modal fade" id="transferModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header d-flex justify-content-between align-items-center">
+                                New Transfer
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
 
-                            <form method="post" action="{% url 'new_transfer' %}">
-                                {% csrf_token %}
-                                
-                                <label class="form-check-label" for="name">Name:</label>
-                                <input class="form-control" type="text" id="name" name="name" required><br>
-                                
-                                <label class="form-check-label" for="description">Description:</label>
-                                <textarea class="form-control" id="description" name="description"></textarea><br>
-                                
-                                <label class="form-check-label" for="account">From Account:</label>
-                                <select class="form-control" id="account" name="account">
-                                    {% for account in accounts %}
-                                        <option value="{{ account.id }}" >{{ account.name }}</option>
-                                    {% endfor %}
-                                </select><br>
-                                
-                                <label class="form-check-label" for="target_account">To Account:</label>
-                                <select class="form-control" id="target_account" name="target_account">
-                                    {% for account in accounts %}
-                                        <option value="{{ account.id }}" >{{ account.name }}</option>
-                                    {% endfor %}
-                                </select><br>
-                                
-                                <label class="form-check-label" for="amount">Amount:</label>
-                                <input class="form-control" type="number" id="amount" name="amount" step="0.01" required><br>
-                                
-                                <input class="form-control" type="checkbox" id="paid" name="paid"><br>
-                                <label class="form-check-label" for="paid">Paid:</label>
-                                
-                                <label class="form-check-label" for="paid_at">Pay date:</label>
-                                <input class="form-control" type="datetime-local" id="paid_at" name="paid_at"><br>
-                                
-                                <label class="form-check-label" for="due_at">Due date:</label>
-                                <input class="form-control" type="datetime-local" id="due_at" name="due_at"><br>
-                                
-                                <button class="btn btn-primary" type="submit">Transfer</button>
-                            </form>
+                                <form method="post" action="{% url 'new_transfer' %}">
+                                    {% csrf_token %}
+                                    
+                                    <label class="form-check-label" for="name">Name:</label>
+                                    <input class="form-control" type="text" id="name" name="name" required><br>
+                                    
+                                    <label class="form-check-label" for="description">Description:</label>
+                                    <textarea class="form-control" id="description" name="description"></textarea><br>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-check-label" for="account">From Account:</label>
+                                            <select class="form-control" id="account" name="account">
+                                                {% for account in accounts %}
+                                                    <option value="{{ account.id }}" >{{ account.name }}</option>
+                                                {% endfor %}
+                                            </select><br>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-check-label" for="target_account">To Account:</label>
+                                            <select class="form-control" id="target_account" name="target_account">
+                                                {% for account in accounts %}
+                                                    <option value="{{ account.id }}" >{{ account.name }}</option>
+                                                {% endfor %}
+                                            </select><br>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label class="form-check-label" for="amount">Amount:</label>
+                                            <input class="form-control" type="number" id="amount" name="amount" step="0.01" required><br>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-check-label" for="paid_at">Pay date:</label>
+                                            <input class="form-control" type="datetime-local" id="paid_at" name="paid_at"><br>
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-check-label" for="due_at">Due date:</label>
+                                            <input class="form-control" type="datetime-local" id="due_at" name="due_at"><br>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" type="submit">Transfer</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-<!-- ==================================================== PENDING ======================================== -->
+<!-- ==================================================== PENDING ====================================================================== -->
                                 
                 <div class="col-12">
                     <div class="card mb-3">
@@ -197,22 +210,30 @@
                                     <th>Amount</th><th>Name</th><th>Account</th><th>Paid</th>
                                 </tr>
                                 {% for transaction in transactions %}
-                                    {% if not transaction.paid %}
-                                        <tr>
-                                            <td>{% if transaction.transaction_type == 'Expense' %}-{% endif %} {{ global_currency }} {{ transaction.amount }}</td>
-                                            <td>{{ transaction.name }}</td>
-                                            <td>{{ transaction.account }}</td>
-                                            <td>{% if transaction.paid %}PAID{% endif %}</td>
-                                        </tr>
-                                    {% endif %}
-                                {% endfor %}
+                                {% if not transaction.paid %}
+                                    <tr>
+                                        <td>{% if transaction.transaction_type == 'Expense' %}-{% endif %} {{ global_currency }} {{ transaction.amount }}</td>
+                                        <td>{{ transaction.name }}</td>
+                                        <td>{{ transaction.account }}</td>
+                                        <td>{% if transaction.paid %}
+                                                PAID
+                                            {% else %}
+                                                <form action="{% url 'mark_transaction_as_paid' transaction.id %}" method="post">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-success btn-sm">Pay</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            
                             </table>
                         </div>
                     </div>
                 </div>
-
-                                            
-<!-- ========================================= ACCCOUNTS ================================================================ -->
+                                          
+<!-- ========================================= ACCCOUNTS =============================================================================== -->
 
                 <div class="col-3">
                     <div class="card mb-3">
@@ -233,14 +254,12 @@
                         <div class="card-body">
                             <ul class="list-group">
                                 {% for account in accounts %}
-                                <li class="list-group-item"><b>{{ account.name }} - {{ global_currency }} {{ account.amount }}</b></li>
+                                <li class="list-group-item"><b>{{ account.name }} - {{ global_currency }} {{ account.total_balance }}</b></li>
                                 {% endfor %}
-                              </ul>
+                            </ul>
                         </div>
                     </div>
                 </div>
-
-
 
                 <!-- === NEW ACCOUNT MODAL === -->
                 <div class="modal fade" id="newAccount" tabindex="-1" aria-labelledby="newAccountLabel" aria-hidden="true">
@@ -254,21 +273,17 @@
                         <form method="post" action="{% url 'new_account' %}">
                             {% csrf_token %}
                             <div class="mb-3">
-                            <label for="accountName" class="form-label">Account Name</label>
-                            <input type="text" class="form-control" id="accountName" name="name" required>
+                                <label for="accountName" class="form-label">Account Name</label>
+                                <input type="text" class="form-control" id="accountName" name="name" required>
                             </div>
                             <div class="mb-3">
-                            <label for="accountAmount" class="form-label">Amount</label>
-                            <input type="number" class="form-control" id="accountAmount" name="amount" step="0.01" value="0.00" required>
-                            </div>
-                            <div class="mb-3">
-                            <label for="accountType" class="form-label">Account Type</label>
-                            <select class="form-select" id="accountType" name="account_type" required>
-                                <option value="Savings">Savings</option>
-                                <option value="Checking">Checking</option>
-                                <option value="Investment">Investment</option>
-                                <option value="Credit">Credit</option>
-                            </select>
+                                <label for="accountType" class="form-label">Account Type</label>
+                                <select class="form-select" id="accountType" name="account_type" required>
+                                    <option value="Savings">Savings</option>
+                                    <option value="Checking">Checking</option>
+                                    <option value="Investment">Investment</option>
+                                    <option value="Credit">Credit</option>
+                                </select>
                             </div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Save changes</button>
@@ -277,10 +292,6 @@
                     </div>
                     </div>
                 </div>
-
-
-
-
 
 
                 <!-- === EDIT ACCOUNTS MODAL === -->
@@ -298,7 +309,7 @@
                             {% for account in accounts %}
                             <li class="list-group-item">
                                 <input type="checkbox" name="selected_accounts" value="{{ account.id }}">
-                                <b>{{ account.name }} - {{ global_currency }} {{ account.amount }}</b>
+                                <b> {{ account.name }} - {{ global_currency }} {{ account.total_balance }}</b>
                             </li>
                             {% endfor %}
                             </ul>
@@ -313,9 +324,7 @@
                 </div>
 
 
-  
-
-<!-- ==================================================== TRANSACTIONS ======================================== -->
+<!-- ==================================================== TRANSACTIONS ================================================================= -->
 
                 <div class="col-9">
                     <div class="card mb-3">
@@ -325,11 +334,38 @@
                         <div class="card-body">
                             <table class="table">
                                 <tr>
-                                    <th>Amount</th><th>Name</th><th>Account</th><th>Paid</th>
+                                    <th>Type</th><th>Date</th><th>Amount</th><th>Name</th><th>Account</th><th>Paid</th>
                                 </tr>
                                 {% for transaction in transactions %}
                                     <tr>
-                                        <td>{% if transaction.transaction_type == 'Expense' %}-{% endif %} {{ global_currency }} {{ transaction.amount }}</td><td>{{ transaction.name }}</td><td>{{ transaction.account }}</td><td>{% if transaction.paid %}PAID{% endif %}</td>
+                                        <td>
+                                            {% if transaction.transaction_type == 'Income' %}
+                                            entrada
+                                            {% elif transaction.transaction_type == 'Expense' %}
+                                            gasto
+                                            {% elif transaction.transaction_type == 'Transfer' %}
+                                            transf
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if transaction.paid %}
+                                                <span class="badge text-dark">{{ transaction.paid_at }}</span> 
+                                            {% else %} 
+                                                <span class="badge text-bg-warning">{{ transaction.due_at }}</span> 
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if transaction.transaction_type == 'Income' %}
+                                                <div class="fw-bold text-success">{{ global_currency }} {{ transaction.amount }}</div>
+                                            {% elif transaction.transaction_type == 'Expense' %}
+                                                <div class="fw-bold text-danger">{% if transaction.transaction_type == 'Expense' %}-{% endif %} {{ global_currency }} {{ transaction.amount }}</div>
+                                            {% elif transaction.transaction_type == 'Transfer' %}
+                                                <div class="fw-bold text-primary">{{ global_currency }} {{ transaction.amount }}</div>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ transaction.name }}</td>
+                                        <td>{% if transaction.transaction_type == 'Transfer' %}{{transaction.account}} >> {{transaction.target_account}}{% else %}{{ transaction.account }}{% endif %}</td>
+                                        <td>{% if transaction.paid %}PAID{% endif %}</td> 
                                     </tr>
                                     {% endfor %}
                             </table>

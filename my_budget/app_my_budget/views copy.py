@@ -11,8 +11,38 @@ from datetime import datetime
 from django.utils import timezone
 from django.http import HttpResponseBadRequest
 
+
+
+
 def home(request):
-    return render(request, 'home.html')
+    accounts = Account.objects.all()
+    transactions = Transaction.objects.all()
+
+    for account in accounts:
+        # Filtra as transações associadas a esta conta
+        account_transactions = transactions.filter(account=account)
+
+        # Calcula o total de receitas (income) para esta conta
+        total_income_account = sum(transaction.amount for transaction in account_transactions if transaction.transaction_type == 'Income' and transaction.paid)
+
+        # Calcula o total de despesas (expenses) para esta conta
+        total_expenses_account = sum(transaction.amount for transaction in account_transactions if transaction.transaction_type == 'Expense' and transaction.paid)
+
+        # Calcula o saldo total para esta conta subtraindo as despesas do total de receitas
+        account.total_balance = total_income_account - total_expenses_account
+
+    total_income = sum(transaction.amount for transaction in transactions if transaction.transaction_type == 'Income' and transaction.paid)
+    total_expenses = sum(transaction.amount for transaction in transactions if transaction.transaction_type == 'Expense' and transaction.paid)
+    total_balance = sum(account.total_balance for account in accounts)
+
+    context = {
+        'accounts': accounts,
+        'transactions': transactions,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'total_balance': total_balance,
+    }
+    return render(request, 'home.html', context)
 
 def new_transaction(request):
     if request.method == 'POST':
@@ -24,7 +54,7 @@ def new_transaction(request):
         account_id = request.POST.get('account')
         amount = request.POST.get('amount')
         recurrent = request.POST.get('recurrent', False) == 'on'
-        paid = request.POST.get('paid', True) == 'on'
+        paid = request.POST.get('paid', False) == 'on'
         paid_at = request.POST.get('paid_at')
         due_at = request.POST.get('due_at')
 
@@ -71,11 +101,12 @@ def new_transfer(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         description = request.POST.get('description')
-        transaction_type = 'Transfer'
+        transaction_type = 'transfer'
         category_id = None
         account_id = request.POST.get('account')
         target_account_id = request.POST.get('target_account')
         amount = request.POST.get('amount')
+        paid = request.POST.get('paid', False) == 'on'
         paid_at = request.POST.get('paid_at')
         due_at = request.POST.get('due_at')
 
@@ -101,7 +132,7 @@ def new_transfer(request):
             account_id=account_id,
             target_account_id=target_account_id,
             amount=amount,
-            paid=True,
+            paid=paid,
             paid_at=paid_at,
             due_at=due_at,
         )
@@ -145,6 +176,7 @@ def delete_selected_accounts(request):
         # Exclua as contas selecionadas do banco de dados
         Account.objects.filter(id__in=selected_account_ids).delete()
     return redirect('home')  # Redireciona de volta para a página inicial após a exclusão
+
 
 def mark_transaction_as_paid(request, transaction_id):
     if request.method == 'POST':

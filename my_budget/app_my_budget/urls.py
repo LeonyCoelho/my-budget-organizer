@@ -7,6 +7,8 @@ urlpatterns = [
     path('new_transfer/', views.new_transfer, name='new_transfer'),
     path('delete_selected_accounts/', views.delete_selected_accounts, name='delete_selected_accounts'),
     path('new_account/', views.new_account, name='new_account'),
+    path('new_account/', views.new_account, name='new_account'),
+    path('mark_transaction_as_paid/<int:transaction_id>/', views.mark_transaction_as_paid, name='mark_transaction_as_paid'),
 
 
 ]
